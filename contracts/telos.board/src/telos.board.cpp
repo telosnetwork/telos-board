@@ -96,6 +96,12 @@ void tfvt::makeelection(name holder) {
 		vector<name>() // initial options
 	)).send();
 
+	// blindly toggling votestake
+	action(permission_level{get_self(), name("active")}, TELOS_DECIDE_N, name("togglebal"), make_tuple(
+		name(_config.open_election_id), // ballot name
+		"votestake"
+	)).send();
+
 	if(is_term_expired()) {
 		_config.open_seats = _config.max_board_seats;
 	}
