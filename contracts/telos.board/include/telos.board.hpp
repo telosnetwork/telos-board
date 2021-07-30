@@ -17,7 +17,7 @@
 using namespace std;
 using namespace eosio;
 
-class [[eosio::contract("telos.tfvt")]] tfvt : public contract {
+class [[eosio::contract("telos.board")]] tfvt : public contract {
 
 public:
 

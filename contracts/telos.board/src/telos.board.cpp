@@ -34,7 +34,7 @@ tfvt::config tfvt::get_default_config() {
 #pragma region Actions
 
 void tfvt::setconfig(name member, config new_config) { 
-    require_auth("tf"_n);
+    require_auth(get_self());
 	configs.remove();
     check(new_config.max_board_seats >= new_config.open_seats, "can't have more open seats than max seats");
 	check(new_config.holder_quorum_divisor > 0, "holder_quorum_divisor must be a non-zero number");
