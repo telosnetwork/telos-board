@@ -99,15 +99,16 @@ void tfvt::makeelection(name holder) {
 	// blindly toggling votestake
 	action(permission_level{get_self(), name("active")}, TELOS_DECIDE_N, name("togglebal"), make_tuple(
 		name(_config.open_election_id), // ballot name
-		"votestake"
+		name("votestake") // setting name
 	)).send();
 
+	/*
 	action(permission_level{get_self(), name("active")}, TELOS_DECIDE_N, name("editdetails"), make_tuple(
 		name(_config.open_election_id), // ballot name
 		"TF Board Election", // title
 		"See https://telos.net/foundation for more info", // description
 		"" // content
-	)).send();
+	)).send();*/
 
 	if(is_term_expired()) {
 		_config.open_seats = _config.max_board_seats;
