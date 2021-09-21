@@ -102,6 +102,13 @@ void tfvt::makeelection(name holder) {
 		"votestake"
 	)).send();
 
+	action(permission_level{get_self(), name("active")}, TELOS_DECIDE_N, name("editdetails"), make_tuple(
+		name(_config.open_election_id), // ballot name
+		"TF Board Election", // title
+		"See https://telos.net/foundation for more info", // description
+		"" // content
+	)).send();
+
 	if(is_term_expired()) {
 		_config.open_seats = _config.max_board_seats;
 	}
@@ -201,7 +208,8 @@ void tfvt::endelect(name holder) {
 	_config.open_seats = _config.max_board_seats - uint8_t(std::distance(members.begin(), members.end()));
 
 	action(permission_level{get_self(), name("active")}, TELOS_DECIDE_N, name("closevoting"), make_tuple(
-		_config.open_election_id
+		_config.open_election_id,
+		false
 	)).send();
 	_config.is_active_election = false;
 }
