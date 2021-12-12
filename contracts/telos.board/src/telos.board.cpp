@@ -147,9 +147,6 @@ void tfvt::startelect(name holder) {
 
 	uint32_t election_end_time = current_time_point().sec_since_epoch() + _config.leaderboard_duration;
 
-    ballots_table ballots(TELOS_DECIDE_N, TELOS_DECIDE_N.value);
-    auto bal = ballots.get(_config.open_election_id.value);
-    map<name, asset> candidates = bal.options;
     uint8_t min = 1;
     uint8_t max = _config.open_seats;
 
