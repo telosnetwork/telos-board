@@ -123,7 +123,7 @@ public:
     void nominate(name nominee, name nominator);
 
     [[eosio::action]]
-    void makeelection(name holder);
+    void makeelection(name holder, std::string description, std::string content);
 
     //[[eosio::action]]
     //void addallcands(name holder, vector<candidate> new_cands);

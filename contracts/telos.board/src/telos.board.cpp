@@ -76,7 +76,7 @@ void tfvt::nominate(name nominee, name nominator) {
     });
 }
 
-void tfvt::makeelection(name holder) {
+void tfvt::makeelection(name holder, std::string description, std::string content) {
 	require_auth(holder);
 	check(!_config.is_active_election, "there is already an election in progress");
 	check(_config.open_seats > 0 || is_term_expired(), "it isn't time for the next election");
@@ -102,13 +102,12 @@ void tfvt::makeelection(name holder) {
 		name("votestake") // setting name
 	)).send();
 
-	/*
 	action(permission_level{get_self(), name("active")}, TELOS_DECIDE_N, name("editdetails"), make_tuple(
 		name(_config.open_election_id), // ballot name
-		"TF Board Election", // title
-		"See https://telos.net/foundation for more info", // description
-		"" // content
-	)).send();*/
+		std::string("TF Board Election"), // title
+		description,
+		content
+	)).send();
 
 	if(is_term_expired()) {
 		_config.open_seats = _config.max_board_seats;
@@ -147,6 +146,18 @@ void tfvt::startelect(name holder) {
 	check(current_time_point().sec_since_epoch() > _config.active_election_min_start_time, "It isn't time to start the election");
 
 	uint32_t election_end_time = current_time_point().sec_since_epoch() + _config.leaderboard_duration;
+
+    ballots_table ballots(TELOS_DECIDE_N, TELOS_DECIDE_N.value);
+    auto bal = ballots.get(_config.open_election_id.value);
+    map<name, asset> candidates = bal.options;
+    uint8_t min = 1;
+    uint8_t max = _config.open_seats;
+
+    action(permission_level{get_self(), name("active")}, TELOS_DECIDE_N, name("editminmax"), make_tuple(
+            name(_config.open_election_id), // ballot name
+            min, // new_min_options
+            max // new_min_options
+    )).send();
 
 	action(permission_level{get_self(), name("active")}, TELOS_DECIDE_N, name("openvoting"), make_tuple(
 		_config.open_election_id, 	//ballot_id
