@@ -143,7 +143,7 @@ void tfvt::startelect(name holder) {
 	uint32_t election_end_time = current_time_point().sec_since_epoch() + _config.leaderboard_duration;
 
     uint8_t min = 1;
-    uint8_t max = _config.open_seats;
+    uint8_t max = get_open_seats();
 
     action(permission_level{get_self(), name("active")}, TELOS_DECIDE_N, name("editminmax"), make_tuple(
             name(_config.open_election_id), // ballot name
