@@ -157,6 +157,12 @@ void tfvt::startelect(name holder) {
 	)).send();
 }
 
+void tfvt::cancelelect() {
+    require_auth(get_self());
+    check(_config.is_active_election, "there is no active election to cancel");
+    _config.is_active_election = false;
+}
+
 void tfvt::endelect(name holder) {
     require_auth(holder);
 	check(_config.is_active_election, "there is no active election to end");

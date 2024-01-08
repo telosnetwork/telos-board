@@ -137,6 +137,9 @@ public:
     void startelect(name holder);
 
     [[eosio::action]]
+    void cancelelect();
+
+    [[eosio::action]]
     void endelect(name holder);
 
 	[[eosio::action]]
