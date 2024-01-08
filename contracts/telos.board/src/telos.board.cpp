@@ -249,59 +249,6 @@ void tfvt::updseatterms(std::map<uint32_t, uint32_t> seat_terms) {
     }
 }
 
-void tfvt::migratestart() {
-    require_auth(get_self());
-
-    members_table members(get_self(), get_self().value);
-    config_table_old configs_old(get_self(), get_self().value);
-
-    check(configs_old.exists(), "No config to migrate from");
-    config config_old = configs_old.get();
-
-    // Move config
-    _config.publisher = config_old.publisher;
-    _config.open_election_id = config_old.open_election_id;
-    _config.holder_quorum_divisor = config_old.holder_quorum_divisor;
-    _config.board_quorum_divisor = config_old.board_quorum_divisor;
-    _config.issue_duration = config_old.issue_duration;
-    _config.start_delay = config_old.start_delay;
-    _config.leaderboard_duration = config_old.leaderboard_duration;
-    _config.election_frequency = config_old.election_frequency;
-    _config.active_election_min_start_time = config_old.active_election_min_start_time;
-    _config.is_active_election = config_old.is_active_election;
-
-    // Clean sets
-    auto it = seats.begin();
-    while(it != seats.end()) {
-        it = seats.erase(it);
-    }
-
-    // Move members to a seat
-    for (auto const& it : members) {
-        seats.emplace(get_self(), [&](auto& s) {
-            s.id = seats.available_primary_key();
-            s.member = it.member;
-            s.next_election_time = config_old.last_board_election_time + config_old.election_frequency;
-        });
-    }
-}
-
-void tfvt::migrateclean() {
-    require_auth(get_self());
-
-    config_table_old configs_old(get_self(), get_self().value);
-
-    // Delete old config
-    configs_old.remove();
-
-    // Delete members
-    members_table members(get_self(), get_self().value);
-    auto it = members.begin();
-    while(it != members.end()) {
-        it = members.erase(it);
-    }
-}
-
 #pragma endregion Actions
 
 

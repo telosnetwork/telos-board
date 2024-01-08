@@ -79,14 +79,6 @@ public:
         EOSLIB_SERIALIZE(board_nominee, (nominee))
     };
 
-    // This table is deprecated - we will go with the board_seat
-    struct [[eosio::table]] board_member {
-        name member;
-
-        uint64_t primary_key() const { return member.value; }
-        EOSLIB_SERIALIZE(board_member, (member))
-    };
-
     struct [[eosio::table]] board_seat {
         uint64_t id;
 
@@ -96,27 +88,6 @@ public:
         uint64_t primary_key() const { return id; }
 
         EOSLIB_SERIALIZE(board_seat, (id)(member)(next_election_time))
-    };
-
-    // Deprecated - moved to configv2
-    struct [[eosio::table]] config {
-        name publisher;
-        uint8_t max_board_seats = 12; // Deprecated - see table:board_seat instead
-        uint8_t open_seats = 12; // Deprecated - see table:board_seat instead
-		name open_election_id;
-		uint32_t holder_quorum_divisor = 5;
-		uint32_t board_quorum_divisor = 2;
-		uint32_t issue_duration = 2000000;
-		uint32_t start_delay = 1200; // Once a new election is open, this is the minimum time to allow candidates
-		uint32_t leaderboard_duration = 2000000;
-		uint32_t election_frequency = 14515200;
-		uint32_t last_board_election_time; // Deprecated - see table:board_seat instead
-        uint32_t active_election_min_start_time = 0;
-        bool is_active_election = false;
-
-        uint64_t primary_key() const { return publisher.value; }
-        EOSLIB_SERIALIZE(config, (publisher)(max_board_seats)(open_seats)(open_election_id)(holder_quorum_divisor)
-			(board_quorum_divisor)(issue_duration)(start_delay)(leaderboard_duration)(election_frequency)(last_board_election_time)(active_election_min_start_time)(is_active_election))
     };
 
     struct [[eosio::table]] configv2 {
@@ -140,14 +111,8 @@ public:
 
     typedef multi_index<name("nominees"), board_nominee> nominees_table;
 
-    // deprecated
-    typedef multi_index<name("boardmembers"), board_member> members_table;
-
     typedef multi_index<name("boardseat"), board_seat> seats_table;
     seats_table seats;
-
-    // deprecated
-    typedef singleton<name("config"), config> config_table_old;
 
     typedef singleton<name("configv2"), configv2> config_table;
     config_table configs;
@@ -162,9 +127,6 @@ public:
     [[eosio::action]]
     void makeelection(name holder, std::string description, std::string content);
 
-    //[[eosio::action]]
-    //void addallcands(name holder, vector<candidate> new_cands);
-
 	[[eosio::action]]
 	void addcand(name candidate);
 
@@ -176,9 +138,6 @@ public:
 
     [[eosio::action]]
     void endelect(name holder);
-
-	// [[eosio::action]]
-	// void setboard(vector<name> members);
 
 	[[eosio::action]]
 	void removemember(name member_to_remove);
@@ -194,12 +153,6 @@ public:
 
     [[eosio::action]]
     void updseatterms(std::map<uint32_t, uint32_t> seat_terms);
-
-    [[eosio::action]]
-    void migratestart();
-
-    [[eosio::action]]
-    void migrateclean();
 
 	//TODO: board member multisig kick action
 			//Starts run off leaderboard at start/end
